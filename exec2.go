@@ -2,10 +2,10 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
 	"fmt"
 	"net/http"
-	"os/exec"
+	"os"
 )
 
 func handle(w http.ResponseWriter, req *http.Request) {
@@ -18,16 +18,29 @@ func handle(w http.ResponseWriter, req *http.Request) {
 //var s1 = http.Handle("bobo", handle)
 
 func main() {
-	c1 := exec.Command("echo", "jiang")
-	_, err := c1.StdinPipe()
-	if err != nil {
-		fmt.Println(err)
+	if len(os.Args) < 2 {
+		fmt.Println("input file name")
+		return
 	}
-	var out bytes.Buffer
-	c1.Stdout = &out
-	c1.Run()
-	fmt.Println(out.String())
-	http.HandleFunc("/jiang", handle)
-	http.ListenAndServe(":9999", nil)
-	fmt.Println("Hello World!")
+
+	f1, e := os.Open(os.Args[1])
+	if e != nil {
+		fmt.Println("input file error")
+		return
+	}
+	defer f1.Close()
+	fo, _ := os.OpenFile(os.Args[1]+"temp", os.O_CREATE|os.O_RDWR|os.O_TRUNC, os.ModePerm)
+	defer fo.Close()
+	f2 := bufio.NewReader(f1)
+	for {
+		b1, _, e := f2.ReadLine()
+		if e != nil {
+			break
+		}
+		fmt.Fprintln(fo, string(b1), "")
+	}
+	fo.Close()
+	//	os.Remove(os.Args[1])
+	os.Rename(os.Args[1]+"temp", os.Args[1])
+
 }

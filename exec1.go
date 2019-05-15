@@ -27,7 +27,7 @@ func main() {
 	c1.Stdout = &out
 	c1.Run()
 	fmt.Println(out.String())
-	http.HandleFunc("/jiang", handle)
-	http.ListenAndServe(":9999", nil)
+	//	http.HandleFunc("/jiang", handle)
+	//http.ListenAndServe(":9999", nil)
 	fmt.Println("Hello World!")
 }
