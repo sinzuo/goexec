@@ -2,10 +2,11 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
+
 	"fmt"
 	"net/http"
-	"os/exec"
+	"os"
 )
 
 func handle(w http.ResponseWriter, req *http.Request) {
@@ -18,16 +19,11 @@ func handle(w http.ResponseWriter, req *http.Request) {
 //var s1 = http.Handle("bobo", handle)
 
 func main() {
-	c1 := exec.Command("echo", "jiang")
-	_, err := c1.StdinPipe()
-	if err != nil {
-		fmt.Println(err)
+	b1 := bufio.NewReader(os.Stdin)
+	c1, _, e := b1.ReadLine()
+	if e != nil {
+		fmt.Println("error")
 	}
-	var out bytes.Buffer
-	c1.Stdout = &out
-	c1.Run()
-	fmt.Println(out.String())
-	http.HandleFunc("/jiang", handle)
-	http.ListenAndServe(":9999", nil)
+	fmt.Println(string(c1))
 	fmt.Println("Hello World!")
 }
